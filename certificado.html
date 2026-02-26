@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Certificado de Incapacidad Médica</title>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+<script src="api.js"></script>
+
+<style>
+
+body{
+font-family: Arial;
+background:#f4f6f8;
+padding:20px;
+}
+
+.container{
+background:white;
+padding:20px;
+border-radius:8px;
+max-width:600px;
+margin:auto;
+}
+
+input,button{
+padding:8px;
+margin:5px 0;
+width:100%;
+}
+
+button{
+background:#0c4a6e;
+color:white;
+border:none;
+cursor:pointer;
+}
+
+#qr{
+margin-top:20px;
+text-align:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Certificado de Incapacidad Médica</h2>
+
+<label>Nombre del paciente</label>
+<input id="pName">
+
+<label>Documento</label>
+<input id="pId">
+
+<label>Fecha inicio</label>
+<input type="date" id="start">
+
+<label>Días</label>
+<input type="number" id="days">
+
+<label>Diagnóstico</label>
+<input id="dx">
+
+<button onclick="generate()">Generar Certificado</button>
+
+<br><br>
+
+Código:
+<input id="authCode" readonly>
+
+<br><br>
+
+Hash:
+<div id="hash"></div>
+
+<div id="qr"></div>
+
+</div>
+
+<script>
+
+
+function randomCode(length){
+
+const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+let result="";
+
+for(let i=0;i<length;i++)
+result+=chars.charAt(Math.floor(Math.random()*chars.length));
+
+return result;
+
+}
+
+
+async function sha256Hex(str){
+
+const buffer=new TextEncoder().encode(str);
+
+const hash=await crypto.subtle.digest("SHA-256",buffer);
+
+return Array.from(new Uint8Array(hash))
+.map(b=>b.toString(16).padStart(2,"0"))
+.join("");
+
+}
+
+
+function payload(){
+
+return{
+
+patient:{
+name:document.getElementById("pName").value,
+id:document.getElementById("pId").value
+},
+
+leave:{
+start:document.getElementById("start").value,
+days:document.getElementById("days").value,
+dx:document.getElementById("dx").value
+}
+
+};
+
+}
+
+
+async function generate(){
+
+const data=payload();
+
+if(!data.patient.name || !data.patient.id){
+
+alert("Complete los datos");
+
+return;
+
+}
+
+const hash=await sha256Hex(JSON.stringify(data));
+
+const code=
+randomCode(4)+"-"+
+randomCode(4)+"-"+
+randomCode(4)+"-"+
+randomCode(4);
+
+
+document.getElementById("authCode").value=code;
+
+document.getElementById("hash").innerText=hash;
+
+
+const cert={
+
+code:code,
+
+hash:hash,
+
+patient_name:data.patient.name,
+
+patient_id:data.patient.id,
+
+start:data.leave.start,
+
+days:data.leave.days,
+
+dx:data.leave.dx,
+
+issued:new Date().toISOString()
+
+};
+
+
+await guardarCertificado(cert);
+
+
+const verifyURL=
+
+"https://nahtanoj489.github.io/verificacion-medicina-y-salud/verificar.html?code="
++code;
+
+
+const canvas=document.createElement("canvas");
+
+QRCode.toCanvas(canvas,verifyURL,{width:200});
+
+const qr=document.getElementById("qr");
+
+qr.innerHTML="";
+
+qr.appendChild(canvas);
+
+}
+
+
+</script>
+
+</body>
+</html>
