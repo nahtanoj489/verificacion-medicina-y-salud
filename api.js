@@ -1,4 +1,4 @@
-const API_URL = "https://sheetdb.io/api/v1/wzyf1f00i31rd";
+const API_URL = "https://sheetdb.io/api/v1/bex292dwd3pa4";
 
 async function guardarCertificado(cert) {
 
