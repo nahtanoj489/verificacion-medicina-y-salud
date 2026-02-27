@@ -12,7 +12,7 @@
 
 <h2>Verificación</h2>
 
-<div id="resultado">Verificando...</div>
+<div id="resultado"></div>
 
 <script>
 
@@ -20,17 +20,20 @@ const params=new URLSearchParams(window.location.search);
 
 const code=params.get("code");
 
+
 verificarCertificado(code)
 
 .then(data=>{
 
 if(data.length>0){
 
-document.getElementById("resultado").innerHTML="CERTIFICADO VALIDO";
+document.getElementById("resultado").innerHTML=
+"CERTIFICADO VALIDO";
 
 }else{
 
-document.getElementById("resultado").innerHTML="CERTIFICADO NO VALIDO";
+document.getElementById("resultado").innerHTML=
+"CERTIFICADO NO VALIDO";
 
 }
 
