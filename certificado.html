@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+
+<title>Generar Certificado</title>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+<style>
+
+body{
+font-family:Arial;
+padding:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>Generar Certificado</h2>
+
+<input id="nombre" placeholder="Nombre">
+
+<input id="documento" placeholder="Documento">
+
+<button onclick="generar()">Generar</button>
+
+<br><br>
+
+Código:
+
+<input id="codigo" readonly>
+
+<div id="qr"></div>
+
+<script>
+
+function randomCode(len){
+
+const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+let result="";
+
+for(let i=0;i<len;i++)
+result+=chars[Math.floor(Math.random()*chars.length)];
+
+return result;
+
+}
+
+
+function generar(){
+
+const codigo=
+randomCode(4)+"-"+
+randomCode(4)+"-"+
+randomCode(4)+"-"+
+randomCode(4);
+
+
+document.getElementById("codigo").value=codigo;
+
+
+const url =
+"verificar.html?code="+codigo;
+
+
+const canvas=document.createElement("canvas");
+
+QRCode.toCanvas(canvas,url,{width:200});
+
+document.getElementById("qr").innerHTML="";
+
+document.getElementById("qr").appendChild(canvas);
+
+alert("IMPORTANTE: ahora debes guardar este código en db.json manualmente");
+
+}
+
+</script>
+
+</body>
+</html>
