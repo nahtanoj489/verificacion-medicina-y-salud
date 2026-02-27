@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 
 <meta charset="UTF-8">
@@ -10,9 +10,9 @@
 
 <body>
 
-<h2>Verificación</h2>
+<h2>Verificación de Certificado</h2>
 
-<div id="resultado"></div>
+<div id="resultado">Verificando...</div>
 
 <script>
 
@@ -23,17 +23,19 @@ const code=params.get("code");
 
 verificarCertificado(code)
 
-.then(data=>{
+.then(result=>{
 
-if(data.length>0){
+if(result.length>0){
 
 document.getElementById("resultado").innerHTML=
-"CERTIFICADO VALIDO";
+
+"<b style='color:green'>CERTIFICADO VÁLIDO</b>";
 
 }else{
 
 document.getElementById("resultado").innerHTML=
-"CERTIFICADO NO VALIDO";
+
+"<b style='color:red'>CERTIFICADO NO VÁLIDO</b>";
 
 }
 
