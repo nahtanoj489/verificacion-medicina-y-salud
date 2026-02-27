@@ -4,7 +4,7 @@ const FILE = "db.json";
 const BRANCH = "main";
 
 
-const TOKEN = "PEGAR_AQUI_TU_TOKEN";
+const TOKEN = "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";
 
 
 async function getDB(){
