@@ -1,96 +1,163 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 
 <meta charset="UTF-8">
 
-<title>Generar Certificado</title>
+<title>Generar Certificado Médico</title>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 
 <script src="api.js"></script>
+
+<style>
+
+body{
+font-family:Arial;
+padding:20px;
+background:#f4f6f8;
+}
+
+.container{
+background:white;
+padding:20px;
+border-radius:8px;
+max-width:500px;
+margin:auto;
+}
+
+input,button{
+width:100%;
+padding:10px;
+margin-top:10px;
+}
+
+#qr{
+margin-top:20px;
+text-align:center;
+}
+
+</style>
 
 </head>
 
 <body>
 
+<div class="container">
+
 <h2>Generar Certificado</h2>
 
-<input id="nombre" placeholder="Nombre">
+<input id="nombre" placeholder="Nombre del paciente">
 
 <input id="documento" placeholder="Documento">
 
-<button onclick="generar()">Generar</button>
+<button onclick="generarCertificado()">Generar Certificado</button>
 
-<br><br>
-
-Código:
+Código generado:
 
 <input id="codigo" readonly>
 
 <div id="qr"></div>
 
+</div>
+
 <script>
 
-function randomCode(len){
+
+function randomCode(length){
 
 const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 let result="";
 
-for(let i=0;i<len;i++)
+for(let i=0;i<length;i++){
+
 result+=chars[Math.floor(Math.random()*chars.length)];
+
+}
 
 return result;
 
 }
 
 
-async function generar(){
+
+async function generarCertificado(){
 
 const nombre=document.getElementById("nombre").value;
 
 const documento=document.getElementById("documento").value;
 
 
+if(!nombre || !documento){
+
+alert("Ingrese nombre y documento");
+
+return;
+
+}
+
+
+// generar código único
+
 const code=
+
 randomCode(4)+"-"+
+
 randomCode(4)+"-"+
+
 randomCode(4)+"-"+
+
 randomCode(4);
 
+
+// mostrar código
 
 document.getElementById("codigo").value=code;
 
 
+// guardar en GitHub
+
 await guardarCertificado({
 
-code,
+code:code,
 
-nombre,
+nombre:nombre,
 
-documento,
+documento:documento,
 
 fecha:new Date().toISOString()
 
 });
 
 
-const url =
-"verificar.html?code="+code;
+// URL absoluta CORRECTA (ESTO ARREGLA EL QR)
+
+const verifyURL=
+
+"https://nahtanoj489.github.io/verificacion-medicina-y-salud/verificar.html?code="+code;
+
+
+// generar QR
+
+const qrDiv=document.getElementById("qr");
+
+qrDiv.innerHTML="";
 
 
 const canvas=document.createElement("canvas");
 
-QRCode.toCanvas(canvas,url);
 
-document.getElementById("qr").innerHTML="";
+await QRCode.toCanvas(canvas,verifyURL,{width:220});
 
-document.getElementById("qr").appendChild(canvas);
+
+qrDiv.appendChild(canvas);
+
 
 }
 
 </script>
 
 </body>
+
 </html>
