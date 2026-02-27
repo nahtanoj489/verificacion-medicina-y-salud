@@ -8,14 +8,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
-<style>
-
-body{
-font-family:Arial;
-padding:20px;
-}
-
-</style>
+<script src="api.js"></script>
 
 </head>
 
@@ -53,31 +46,47 @@ return result;
 }
 
 
-function generar(){
+async function generar(){
 
-const codigo=
+const nombre=document.getElementById("nombre").value;
+
+const documento=document.getElementById("documento").value;
+
+
+const code=
 randomCode(4)+"-"+
 randomCode(4)+"-"+
 randomCode(4)+"-"+
 randomCode(4);
 
 
-document.getElementById("codigo").value=codigo;
+document.getElementById("codigo").value=code;
+
+
+await guardarCertificado({
+
+code,
+
+nombre,
+
+documento,
+
+fecha:new Date().toISOString()
+
+});
 
 
 const url =
-"verificar.html?code="+codigo;
+"verificar.html?code="+code;
 
 
 const canvas=document.createElement("canvas");
 
-QRCode.toCanvas(canvas,url,{width:200});
+QRCode.toCanvas(canvas,url);
 
 document.getElementById("qr").innerHTML="";
 
 document.getElementById("qr").appendChild(canvas);
-
-alert("IMPORTANTE: ahora debes guardar este código en db.json manualmente");
 
 }
 
